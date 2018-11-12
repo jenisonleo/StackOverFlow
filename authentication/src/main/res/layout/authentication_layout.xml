@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent" xmlns:card_view="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/login_flipper">
+    <!--child 0 - welcome page-->
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/login_bg">
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="100dp"
+                      android:layout_centerInParent="true"
+                      android:id="@+id/bannerContainer">
+            <ImageView android:layout_width="100dp"
+                       android:layout_height="match_parent"
+                       android:layout_gravity="center"
+                       android:src="@drawable/small"
+                       android:id="@+id/logo"
+                       android:contentDescription="@string/title"/>
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:text="@string/title"
+                      android:singleLine="true"
+                      android:textSize="28sp"
+                      android:gravity="center"
+                      android:id="@+id/banner_title"
+                      android:textColor="@android:color/white"/>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/description"
+                  android:singleLine="true"
+                  android:textSize="18sp"
+                  android:layout_below="@id/bannerContainer"
+                  android:gravity="center"
+                  android:layout_marginTop="20sp"
+                  android:textColor="@android:color/white"
+                  android:id="@+id/intro"/>
+
+        <androidx.cardview.widget.CardView android:layout_width="wrap_content"
+                                           android:layout_height="wrap_content"
+                                           android:background="@android:color/white"
+                                           android:layout_centerHorizontal="true"
+                                           card_view:cardCornerRadius="8dp"
+                                           android:paddingStart="10dp"
+                                           android:paddingEnd="10dp"
+                                           android:id="@+id/signin"
+                                           android:layout_marginTop="15dp"
+                                           android:layout_below="@id/intro">
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:gravity="center"
+                      android:textStyle="bold"
+                      android:textSize="24sp"
+                      android:padding="5dp"
+                      android:textColor="@android:color/holo_red_dark"
+                      android:text="@string/sign_in_sign_up"/>
+        </androidx.cardview.widget.CardView>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="@string/skip_signin"
+                  android:textColor="@android:color/white"
+                  android:textSize="18sp"
+                  android:textStyle="italic"
+                  android:layout_centerHorizontal="true"
+                  android:layout_below="@id/signin"
+                  android:layout_marginTop="15sp"
+                  android:padding="15dp"
+                  android:id="@+id/skip_signin"/>
+
+    </RelativeLayout>
+
+    <!--child 1 - login page-->
+    <WebView android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:id="@+id/login_webview"/>
+    <!--child 2 - loader authentication-->
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+        <ProgressBar android:layout_width="200dp"
+                     android:layout_height="200dp"
+                     android:id="@+id/loader"
+                     android:layout_centerInParent="true"/>
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@+id/loader"
+                  android:textStyle="italic"
+                  android:textSize="18sp"
+                  android:layout_centerHorizontal="true"
+                  android:text="@string/authenticating_message"/>
+    </RelativeLayout>
+</ViewFlipper>
