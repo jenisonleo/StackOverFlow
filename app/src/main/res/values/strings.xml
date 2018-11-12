@@ -2,7 +2,13 @@
     <string name="app_name">StackOverFlow</string>
 
     <string name="vpvote_title">Upvotes</string>
+    <string name="name_title">Created by</string>
+    <string name="date_title">Created On</string>
+
     <string name="vpvote_default">0</string>
+    <string name="name_default">Name</string>
+    <string name="date_default">Date</string>
+
     <string name="name_pretext">Name: </string>
     <string name="created_pretext">Created on </string>
     <string name="personal_naviagtion_title">Personal</string>

@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @SuppressLint("SimpleDateFormat")
-class ListingAdapter(context: Context,callback:DiffUtil.ItemCallback<StackEntity>): PagedListAdapter<StackEntity,ListingHolder>(callback){
+class ListingAdapter(val context: Context,callback:DiffUtil.ItemCallback<StackEntity>): PagedListAdapter<StackEntity,ListingHolder>(callback){
 
     val dateFormat:SimpleDateFormat
     var toast: Toast?=null
@@ -43,15 +43,14 @@ class ListingAdapter(context: Context,callback:DiffUtil.ItemCallback<StackEntity
         val itemm = getItem(position)
         holder.titleContainer.setText(itemm?.questionTitle)
         holder.upVoteContainer.text = itemm?.upvotes.toString()
-        holder.nameContainer.setText(resources.getString(R.string.name_pretext).plus(" ").plus(itemm?.uName))
+        holder.nameContainer.setText(itemm?.uName)
         val date = Date((itemm?:throw Exception()).askedTime*1000L)
-        holder.timeContainer.setText(resources.getString(R.string.created_pretext).plus(" ").plus(dateFormat.format(date)))
+        holder.timeContainer.setText(dateFormat.format(date))
         for(i in 0..(itemm.tags.size-1)){
             val textView= TextView(holder.itemView.context)
             val p=FlexboxLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,100)
             p.setMargins(15,15,15,15)
-            textView.setPadding(15,0,15,0)
-            textView.setBackgroundColor(Color.GRAY)
+            textView.background=context.resources.getDrawable(R.drawable.tag_bg,null)
             textView.setText(itemm.tags.get(i))
             textView.gravity=Gravity.CENTER
             textView.layoutParams=p
