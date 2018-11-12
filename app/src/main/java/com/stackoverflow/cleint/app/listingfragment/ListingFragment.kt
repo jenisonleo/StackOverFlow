@@ -39,16 +39,7 @@ class ListingFragment: Fragment(){
         if(arguments!=null && arguments!!.getBoolean(onlogin,false)){
             viewModel.dataSource.clearTable()
         }
-        val context=context
-        if(context==null){
-            throw Exception()
-        }
-        if(!viewModel.authenticationApi.isSignedIn()){
-            viewModel.doIntialChecksforPublic(context.resources.getString(R.string.clientkey),context.resources.getString(R.string.baseurlmine),context.resources.getString(R.string.baseurl))
-        }else{
-            viewModel.doIntialChecksforMine(context.resources.getString(R.string.clientkey),context.resources.getString(R.string.baseurlmine),context.resources.getString(R.string.baseurl))
-            viewModel.doIntialChecksforPublic(context.resources.getString(R.string.clientkey),context.resources.getString(R.string.baseurlmine),context.resources.getString(R.string.baseurl))
-        }
+        doIntialFetch()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -102,6 +93,11 @@ class ListingFragment: Fragment(){
             alertDialog=createDialog()
             alertDialog?.show()
         }
+        view.swiperefresh.setOnRefreshListener {
+            viewModel.dataSource.clearTable()
+            doIntialFetch()
+            view.swiperefresh.isRefreshing=false
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -143,6 +139,19 @@ class ListingFragment: Fragment(){
     fun createViewModel(){
         val commonComponent = ViewModelProviders.of(activity ?: throw Exception("bounded activity is null. Couldn't create fragment"),ListingActivityViewModelFactory(context?: throw Exception("bounded activity is null. Couldn't create fragment"))).get(ListingActivityViewModel::class.java).commonComponent//NO I18N
         viewModel = ViewModelProviders.of(this, ListingViewModelFactory(commonComponent)).get(ListingViewModel::class.java)
+    }
+
+    private fun doIntialFetch(){
+        val context=context
+        if(context==null){
+            throw Exception()
+        }
+        if(!viewModel.authenticationApi.isSignedIn()){
+            viewModel.doIntialChecksforPublic(context.resources.getString(R.string.clientkey),context.resources.getString(R.string.baseurlmine),context.resources.getString(R.string.baseurl))
+        }else{
+            viewModel.doIntialChecksforMine(context.resources.getString(R.string.clientkey),context.resources.getString(R.string.baseurlmine),context.resources.getString(R.string.baseurl))
+            viewModel.doIntialChecksforPublic(context.resources.getString(R.string.clientkey),context.resources.getString(R.string.baseurlmine),context.resources.getString(R.string.baseurl))
+        }
     }
 
 
