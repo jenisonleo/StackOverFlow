@@ -20,6 +20,8 @@ data class StackEntity(
     var uName:String,
     @ColumnInfo(name = "askedtime")
     var askedTime:Long,
+    @ColumnInfo(name = "lastactivitytime")
+    var lastActivityTime:Long,
     @ColumnInfo(name = "sorttype")
     var sortType:SortType
 )

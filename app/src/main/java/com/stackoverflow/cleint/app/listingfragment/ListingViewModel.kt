@@ -12,7 +12,6 @@ import com.stackoverflow.cleint.app.database.QuestionIdObject
 import com.stackoverflow.cleint.app.database.SortType
 import com.stackoverflow.cleint.app.database.StackEntity
 import com.stackoverflow.cleint.app.dependencyinjection.CommonComponent
-import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -37,7 +36,7 @@ class ListingViewModel(commonComponent: CommonComponent) :ViewModel(){
     }
 
     private fun fetchQuestions(key:String,baseurl:String,sortType: SortType,pageIndex:Int,isPersonal:Boolean){
-        var url=baseurl+"questions?site=stackoverflow"+"&key="+key+"&filter=!OfZjfMY3eWzEtMb(pv5mYAM-sznYJt5lkv0M_PFhgVj"
+        var url=baseurl+"questions?site=stackoverflow"+"&key="+key+"&filter=!OfZjfMY3eWzEtMb(pv5mYAM-sznYJt5lkv0M_PFhgVj&order=desc"
         if(isPersonal){
             url=url.plus("&access_token="+authenticationApi.getOauthToken())
         }
@@ -74,6 +73,8 @@ class ListingViewModel(commonComponent: CommonComponent) :ViewModel(){
                         }
                         val name = element.asJsonObject.get("owner").asJsonObject.get("display_name").asString
                         val time = element.asJsonObject.get("creation_date").asLong
+                        val lastactivity = element.asJsonObject.get("last_activity_date").asLong
+
                         val stackEntity = StackEntity(
                             QuestionIdObject(questionID, isPersonal, sortType),
                             title,
@@ -81,6 +82,7 @@ class ListingViewModel(commonComponent: CommonComponent) :ViewModel(){
                             tag,
                             name,
                             time,
+                            lastactivity,
                             sortType
                         )
                         dataList.add(stackEntity)
@@ -99,24 +101,21 @@ class ListingViewModel(commonComponent: CommonComponent) :ViewModel(){
     }
 
     fun getPublicData(clentkey:String,baseUrl:String,sortType: SortType,isPersonal:Boolean): LiveData<PagedList<StackEntity>> {
-        val livePagedListBuilder:LivePagedListBuilder<Int,StackEntity>
-        if(isPersonal){
-            livePagedListBuilder=LivePagedListBuilder<Int,StackEntity>(dataSource.stackdb.getStackDao().allQuestionsMine(sortType),30)
-            livePagedListBuilder.setBoundaryCallback(object :PagedList.BoundaryCallback<StackEntity>(){
-                override fun onItemAtEndLoaded(itemAtEnd: StackEntity) {
-                    Log.e("end"," reached")
-                    fetchQuestions(clentkey,baseUrl,sortType,dataSource.getPagesLoaded(sortType,isPersonal)+1,isPersonal)
-                }
-            })
-        }else{
-            livePagedListBuilder=LivePagedListBuilder<Int,StackEntity>(dataSource.stackdb.getStackDao().allQuestionsPublic(sortType),30)
-            livePagedListBuilder.setBoundaryCallback(object :PagedList.BoundaryCallback<StackEntity>(){
-                override fun onItemAtEndLoaded(itemAtEnd: StackEntity) {
-                    Log.e("end"," reached")
-                    fetchQuestions(clentkey,baseUrl,sortType,dataSource.getPagesLoaded(sortType,isPersonal)+1,isPersonal)
-                }
-            })
+        val sortString:String
+        when(sortType){
+            SortType.Votes->sortString="upvotes"
+            SortType.Activity->sortString="lastactivitytime"
+            SortType.Date->sortString="askedtime"
+            SortType.Hot->sortString="lastactivitytime"
         }
+
+        val livePagedListBuilder:LivePagedListBuilder<Int,StackEntity> =LivePagedListBuilder<Int,StackEntity>(dataSource.stackdb.getStackDao().allQuestions(sortType,if(isPersonal)"%true%" else "%false%",sortString),30)
+        livePagedListBuilder.setBoundaryCallback(object :PagedList.BoundaryCallback<StackEntity>(){
+            override fun onItemAtEndLoaded(itemAtEnd: StackEntity) {
+                Log.e("end"," reached")
+                fetchQuestions(clentkey,baseUrl,sortType,dataSource.getPagesLoaded(sortType,isPersonal)+1,isPersonal)
+            }
+        })
 
         return livePagedListBuilder.build()
     }

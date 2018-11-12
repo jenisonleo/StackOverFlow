@@ -12,10 +12,8 @@ interface StackDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addQuestions(questions: List<StackEntity>)
 
-    @Query("SELECT * FROM stacktable where sorttype =:sortType AND questionId LIKE '%true%'")
-    fun allQuestionsMine(sortType: SortType):DataSource.Factory<Int,StackEntity>
-    @Query("SELECT * FROM stacktable where sorttype =:sortType AND questionId LIKE '%false%'")
-    fun allQuestionsPublic(sortType: SortType):DataSource.Factory<Int,StackEntity>
+    @Query("SELECT * FROM stacktable where sorttype =:sortType AND questionId LIKE :isOwned ORDER BY :sort DESC")
+    fun allQuestions(sortType: SortType, isOwned:String,sort:String):DataSource.Factory<Int,StackEntity>
 
     @Query("DELETE FROM stacktable")
     fun deleteTable()
