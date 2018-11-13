@@ -22,6 +22,9 @@ import kotlinx.android.synthetic.main.listing_fragment.view.*
 import kotlin.Exception
 import android.view.MotionEvent
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import android.view.View.OnTouchListener
+
+
 
 
 class ListingFragment: Fragment(){
@@ -180,13 +183,13 @@ class ListingFragment: Fragment(){
 
     @SuppressLint("ClickableViewAccessibility")
     fun solveScrollAndSwipe(pager:ViewPager, swipeRefreshLayout: SwipeRefreshLayout){
-        pager.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                swipeRefreshLayout.setEnabled(false)
-                when (event.action) {
-                    MotionEvent.ACTION_UP -> swipeRefreshLayout.setEnabled(true)
-                }
-                return false
+        pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, v: Float, i1: Int) {}
+
+            override fun onPageSelected(position: Int) {}
+
+            override fun onPageScrollStateChanged(state: Int) {
+                swipeRefreshLayout.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
             }
         })
     }
