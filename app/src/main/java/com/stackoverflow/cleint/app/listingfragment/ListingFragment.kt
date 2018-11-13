@@ -1,5 +1,6 @@
 package com.stackoverflow.cleint.app.listingfragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -19,6 +20,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.listing_fragment.view.*
 import kotlin.Exception
+import android.view.MotionEvent
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+
 
 class ListingFragment: Fragment(){
 
@@ -84,6 +88,8 @@ class ListingFragment: Fragment(){
             }
             false
         }
+        solveScrollAndSwipe(personalPager,view.swiperefresh)
+        solveScrollAndSwipe(publicPager,view.swiperefresh)
         return view
     }
 
@@ -170,6 +176,19 @@ class ListingFragment: Fragment(){
         val circularAnimation=ViewAnimationUtils.createCircularReveal(view,w,h,0.toFloat(),h.toFloat())
         circularAnimation.duration=300
         circularAnimation.start()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun solveScrollAndSwipe(pager:ViewPager, swipeRefreshLayout: SwipeRefreshLayout){
+        pager.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                swipeRefreshLayout.setEnabled(false)
+                when (event.action) {
+                    MotionEvent.ACTION_UP -> swipeRefreshLayout.setEnabled(true)
+                }
+                return false
+            }
+        })
     }
 
 }
